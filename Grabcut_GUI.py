@@ -203,7 +203,7 @@ class AppFrame(tk.Frame):
         self.askopenfilename() # Direccion del archivo
         self.image_in = cv2.imread(self.filepath) # Abrir imagen de disco
         self.image_in = cv2.resize(self.image_in,(self.tam,self.tam)) # Cambiar tamaño de imagen a tamxtam
-        self.img_copy = self.image_in.copy() # Copia de la imagen original
+        #self.img_copy = self.image_in.copy() # Copia de la imagen original
         self.img_bg = np.zeros((self.tam,self.tam,3),np.uint8) # Creacion de imagen de fondo con dimensiones tamxtam y color negro
         self.image_out = self.image_in.copy() # Copia de la imagen original
         self.trans_show_images(self.image_in,self.image_out) # Actualizacion de imagen en los paneles de GUI
