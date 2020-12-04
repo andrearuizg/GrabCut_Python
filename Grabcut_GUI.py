@@ -5,20 +5,17 @@ Proyecto final, procesamiento de imagenes
 @author: Andrea Ruiz, Sebastian Parrado & Pablo Mosquera
 """
 
-import tkinter as tk
-from tkinter.filedialog import askopenfilename
-from PIL import Image # Para mostrar la imagen en la interfaz GUI
-from PIL import ImageTk # Para mostrar la imagen en la interfaz GUI
-import cv2
-import numpy as np
-#import sys
+import tkinter as tk # GUI
+from tkinter.filedialog import askopenfilename # Buscar archivos en disco local
+from PIL import Image # Para mostrar la imagen en la GUI
+from PIL import ImageTk # Para mostrar la imagen en la GUI
+import cv2 # Opencv
+import numpy as np # Numpy
 
-###Step 1: Create The App Frame
+# App Frame
 class AppFrame(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
-        ###call the parent constructor
         tk.Frame.__init__(self, parent, *args, **kwargs)
-
         self.parent = parent
     
         # Variables globales
@@ -44,325 +41,287 @@ class AppFrame(tk.Frame):
         self.wn_bg = '#E0F3FA'  # Fondo ventana
         self.wn_fg = '#0B5E7D'  # Letra ventana
         
-        # self.tamanio imagenes que se muestran en la interfaz. Las imagenes son cuadradas
+        # Tamanio imagenes que se muestran en la GUI. Las imagenes son cuadradas
         self.tam = 600 
         
-        # Posiciones y self.tamanios de los botones
+        # Posiciones y tamanios de los botones
         self.btn_posx = 1240 # Posicion x del boton
         self.btn_posy = 145 # Posicion y del primer bloque de botones
         self.btn_posy2 = 675 # Posicion y del segundo bloque de botones
-        self.btn_w = 110 # self.tamanio horizontal boton
-        self.btn_h = 30 # self.tamanio vertical boton
+        self.btn_w = 110 # Tamanio horizontal boton
+        self.btn_h = 30 # Tamanio vertical boton
         
-        self.gui()
+        # Funciones iniciales
+        self.gui() # Función configuracion GUI
+        self.select_reset() # Reiniciar variables
         
-        self.select_reset()
-        
+    # Funcion configuracion GUI
     def gui(self):
         """
         Textos en la ventana
-        """
-        lbli = tk.Label(self, text=" ", font=("Arial Bold", 40)) # Configuracion boton (ventana, texto, estilo y self.tamaño de letra)
-        lbli.place(x=620, y=self.btn_posy, width=self.tam, height=self.tam) # Posicion y self.tamanio texto
-        lbli.configure(bg=self.wn_bg,fg=self.wn_fg) # Colores texto
-        #lbli.bind('<Motion>',self.motion)
-        
-        lbl0 = tk.Label(self, text=" ", font=("Arial Bold", 40)) # Configuracion boton (ventana, texto, estilo y self.tamaño de letra)
-        lbl0.place(x=0, y=0, width=1370, height=820) # Posicion y self.tamanio texto
+        """        
+        text = " " # Texto del label
+        lbl0 = tk.Label(self, text=" ", font=("Arial Bold", 40)) # Configuracion label (ventana, texto, estilo y tamanio de letra)
+        lbl0.place(x=0, y=0, width=1370, height=820) # Posicion y tamanio texto
         lbl0.configure(bg=self.wn_bg,fg=self.wn_fg) # Colores texto
         
-        lbl1 = tk.Label(self, text="Proyecto final - Procesamiento de imágenes y visión", font=("Arial Bold", 35)) # Configuracion boton (ventana, texto, estilo y self.tamaño de letra)
-        lbl1.place(x=10, y=5, width=1340, height=60) # Posicion y self.tamanio texto
+        text = "Proyecto final - Procesamiento de imágenes y visión" # Texto del label
+        lbl1 = tk.Label(self, text=text, font=("Arial Bold", 35)) # Configuracion label (ventana, texto, estilo y tamanio de letra)
+        lbl1.place(x=10, y=5, width=1340, height=60) # Posicion y tamanio texto
         lbl1.configure(bg=self.wn_bg,fg=self.wn_fg) # Colores texto
         
-        text = "Este proyecto consiste en realizar la segmentación de una imagen y ubicarla sobre un fondo, dichas imagenes se seleccionan desde  el disco duro del computador. Para ello se hace uso de los botones" 
-        lbl2 = tk.Label(self, text=text, font=("Arial Bold", 10)) # Configuracion boton (ventana, texto, estilo y self.tamaño de letra)
-        lbl2.place(x=10, y=60, width=1340, height=20) # Posicion y self.tamanio texto
+        text = "Este proyecto consiste en realizar la segmentación de una imagen y ubicarla sobre un fondo, dichas imagenes se seleccionan desde  el disco duro del computador. Para ello se hace uso de los botones" # Texto del label
+        lbl2 = tk.Label(self, text=text, font=("Arial Bold", 10)) # Configuracion label (ventana, texto, estilo y tamanio de letra)
+        lbl2.place(x=10, y=60, width=1340, height=20) # Posicion y tamanio texto
         lbl2.configure(bg=self.wn_bg,fg=self.wn_fg) # Colores texto
         
-        text = "de la derecha, con Rectangle se selecciona el área a segmentar, con Foreground y Background se marcan zonas a las que pertece respectivamente el primer plano o fondo. Finalmente, cada vez que se"
-        lbl2_1 = tk.Label(self, text=text, font=("Arial Bold", 10)) # Configuracion boton (ventana, texto, estilo y self.tamaño de letra)
-        lbl2_1.place(x=10, y=80, width=1340, height=20) # Posicion y self.tamanio texto
+        text = "de la derecha, con Rectangle se selecciona el área a segmentar, con Foreground y Background se marcan zonas a las que pertece respectivamente el primer plano o fondo. Finalmente, cada vez que se" # Texto del label
+        lbl2_1 = tk.Label(self, text=text, font=("Arial Bold", 10)) # Configuracion label (ventana, texto, estilo y tamanio de letra)
+        lbl2_1.place(x=10, y=80, width=1340, height=20) # Posicion y tamanio texto
         lbl2_1.configure(bg=self.wn_bg,fg=self.wn_fg) # Colores texto
         
-        text = "desee, se pueden realizar iteraciones y observar el resultado en pantalla."
-        lbl2_2 = tk.Label(self, text=text, font=("Arial Bold", 10)) # Configuracion boton (ventana, texto, estilo y self.tamaño de letra)
-        lbl2_2.place(x=10, y=100, width=1340, height=20) # Posicion y self.tamanio texto
+        text = "desee, se pueden realizar iteraciones y observar el resultado en pantalla." # Texto del label
+        lbl2_2 = tk.Label(self, text=text, font=("Arial Bold", 10)) # Configuracion boton (ventana, texto, estilo y tamanio de letra)
+        lbl2_2.place(x=10, y=100, width=1340, height=20) # Posicion y tamanio texto
         lbl2_2.configure(bg=self.wn_bg,fg=self.wn_fg) # Colores texto
         
-        lbl3 = tk.Label(self, text="Proyecto realizado por: Pablo Mosquera, Juan Sebastián Parrado y Andrea Ruiz", font=("Arial Bold", 10)) # Configuracion boton (ventana, texto, estilo y self.tamaño de letra)
-        lbl3.place(x=10, y=740, width=1340, height=30) # Posicion y self.tamanio texto
+        text = "Proyecto realizado por: Pablo Mosquera, Juan Sebastián Parrado y Andrea Ruiz" # Texto del label
+        lbl3 = tk.Label(self, text=text, font=("Arial Bold", 10)) # Configuracion boton (ventana, texto, estilo y tamanio de letra)
+        lbl3.place(x=10, y=740, width=1340, height=30) # Posicion y tamanio texto
         lbl3.configure(bg=self.wn_bg,fg=self.wn_fg) # Colores texto
         
-        lbl4 = tk.Label(self, text="Imagen entrada", font=("Arial Bold", 15)) # Configuracion boton (ventana, texto, estilo y self.tamaño de letra)
-        lbl4.place(x=10, y=120, width=600, height=25) # Posicion y self.tamanio texto
+        text = "Imagen entrada" # Texto del label
+        lbl4 = tk.Label(self, text=text, font=("Arial Bold", 15)) # Configuracion boton (ventana, texto, estilo y tamanio de letra)
+        lbl4.place(x=10, y=120, width=600, height=25) # Posicion y tamanio texto
         lbl4.configure(bg=self.wn_bg,fg=self.wn_fg) # Colores texto
         
-        lbl5 = tk.Label(self, text="Imagen salida", font=("Arial Bold", 15)) # Configuracion boton (ventana, texto, estilo y self.tamaño de letra)
-        lbl5.place(x=620, y=120, width=600, height=25) # Posicion y self.tamanio texto
+        text = "Imagen salida" # Texto del label
+        lbl5 = tk.Label(self, text=text, font=("Arial Bold", 15)) # Configuracion boton (ventana, texto, estilo y tamanio de letra)
+        lbl5.place(x=620, y=120, width=600, height=25) # Posicion y tamanio texto
         lbl5.configure(bg=self.wn_bg,fg=self.wn_fg) # Colores texto
         
-        lbl6 = tk.Label(self, text="Botones", font=("Arial Bold", 15)) # Configuracion boton (ventana, texto, estilo y self.tamaño de letra)
-        lbl6.place(x=self.btn_posx, y=120, width=self.btn_w, height=25) # Posicion y self.tamanio texto
+        text = "Botones" # Texto del label
+        lbl6 = tk.Label(self, text=text, font=("Arial Bold", 15)) # Configuracion boton (ventana, texto, estilo y tamanio de letra)
+        lbl6.place(x=self.btn_posx, y=120, width=self.btn_w, height=25) # Posicion y tamanio texto
         lbl6.configure(bg=self.wn_bg,fg=self.wn_fg) # Colores texto
         
         """
         Botones en la ventana
         """
         n = 0 # Hace referencia a la operacion de la posicion en y del boton 1
-        btn1 = tk.Button(self, text="Select an image", bg=self.but_bg, fg=self.but_fg, command=self.select_image) # Configuracion del boton 1 (ventana, texto, colores de fondo y de letra, funcion)
-        btn1.place(x=self.btn_posx, y=(self.btn_posy+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y self.tamanio boton 1
+        text = "Select an image" # Texto boton 1
+        btn1 = tk.Button(self, text=text, bg=self.but_bg, fg=self.but_fg, command=self.select_image) # Configuracion del boton 1 (ventana, texto, colores de fondo y de letra, funcion)
+        btn1.place(x=self.btn_posx, y=(self.btn_posy+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y tamanio boton 1
         
         n = 2 # Hace referencia a la operacion de la posicion en y del boton 2
-        btn2 = tk.Button(self, text="Rectangle", bg=self.but_bg, fg=self.but_fg, command=self.select_rectangle) # Configuracion del boton 2 (ventana, texto, colores de fondo y de letra, funcion)
-        btn2.place(x=self.btn_posx, y=(self.btn_posy+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y self.tamanio boton 2
+        text = "Rectangle" # Texto boton 2
+        btn2 = tk.Button(self, text=text, bg=self.but_bg, fg=self.but_fg, command=self.select_rectangle) # Configuracion del boton 2 (ventana, texto, colores de fondo y de letra, funcion)
+        btn2.place(x=self.btn_posx, y=(self.btn_posy+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y tamanio boton 2
         
         n = 3 # Hace referencia a la operacion de la posicion en y del boton 3
-        btn3 = tk.Button(self, text="Background", bg=self.but_bg, fg=self.but_fg, command=self.select_background) # Configuracion del boton 3 (ventana, texto, colores de fondo y de letra, funcion)
-        btn3.place(x=self.btn_posx, y=(self.btn_posy+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y self.tamanio boton 3
+        text = "Background" # Texto boton 3
+        btn3 = tk.Button(self, text=text, bg=self.but_bg, fg=self.but_fg, command=self.select_background) # Configuracion del boton 3 (ventana, texto, colores de fondo y de letra, funcion)
+        btn3.place(x=self.btn_posx, y=(self.btn_posy+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y tamanio boton 3
         
         n = 4 # Hace referencia a la operacion de la posicion en y del boton 4
-        btn4 = tk.Button(self, text="Foreground", bg=self.but_bg, fg=self.but_fg, command=self.select_foreground) # Configuracion del boton 4 (ventana, texto, colores de fondo y de letra, funcion)
-        btn4.place(x=self.btn_posx, y=(self.btn_posy+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y self.tamanio boton 4
+        text = "Foreground" # Texto boton 4
+        btn4 = tk.Button(self, text=text, bg=self.but_bg, fg=self.but_fg, command=self.select_foreground) # Configuracion del boton 4 (ventana, texto, colores de fondo y de letra, funcion)
+        btn4.place(x=self.btn_posx, y=(self.btn_posy+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y tamanio boton 4
         
         n = 5 # Hace referencia a la operacion de la posicion en y del boton 5
-        btn5 = tk.Button(self, text="Iteration", bg=self.but_bg, fg=self.but_fg, command=self.select_iteration) # Configuracion del boton 5 (ventana, texto, colores de fondo y de letra, funcion)
-        btn5.place(x=self.btn_posx, y=(self.btn_posy+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y self.tamanio boton 5
+        text = "Iteration" # Texto boton 5
+        btn5 = tk.Button(self, text=text, bg=self.but_bg, fg=self.but_fg, command=self.select_iteration) # Configuracion del boton 5 (ventana, texto, colores de fondo y de letra, funcion)
+        btn5.place(x=self.btn_posx, y=(self.btn_posy+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y tamanio boton 5
         
         n = 1 # Hace referencia a la operacion de la posicion en y del boton 6
-        btn6 = tk.Button(self, text="Select Background", bg=self.but_bg, fg=self.but_fg, command=self.select_bg) # Configuracion del boton 6 (ventana, texto, colores de fondo y de letra, funcion)
-        btn6.place(x=self.btn_posx, y=(self.btn_posy+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y self.tamanio boton 6
+        text = "Select Background" # Texto boton 6
+        btn6 = tk.Button(self, text=text, bg=self.but_bg, fg=self.but_fg, command=self.select_bg) # Configuracion del boton 6 (ventana, texto, colores de fondo y de letra, funcion)
+        btn6.place(x=self.btn_posx, y=(self.btn_posy+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y tamanio boton 6
         
         n = 0 # Hace referencia a la operacion de la posicion en y del boton 7
-        btn7 = tk.Button(self, text="Save images", bg=self.but_bg, fg=self.but_fg, command=self.select_save) # Configuracion del boton 7 (ventana, texto, colores de fondo y de letra, funcion)
-        btn7.place(x=self.btn_posx, y=(self.btn_posy2+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y self.tamanio boton 7
+        text = "Save images" # Texto boton 7
+        btn7 = tk.Button(self, text=text, bg=self.but_bg, fg=self.but_fg, command=self.select_save) # Configuracion del boton 7 (ventana, texto, colores de fondo y de letra, funcion)
+        btn7.place(x=self.btn_posx, y=(self.btn_posy2+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y tamanio boton 7
         
         n = 1  # Hace referencia a la operacion de la posicion en y del boton 8
-        btn8 = tk.Button(self, text="Reset", bg=self.but_bg, fg=self.but_fg, command=self.select_reset) # Configuracion del boton 8 (ventana, texto, colores de fondo y de letra, funcion)
-        btn8.place(x=self.btn_posx, y=(self.btn_posy2+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y self.tamanio boton 8
+        text = "Reset" # Texto boton 8
+        btn8 = tk.Button(self, text=text, bg=self.but_bg, fg=self.but_fg, command=self.select_reset) # Configuracion del boton 8 (ventana, texto, colores de fondo y de letra, funcion)
+        btn8.place(x=self.btn_posx, y=(self.btn_posy2+(n*40)), width=self.btn_w, height=self.btn_h) # Posicion y tamanio boton 8
 
-        
-        ###Create button
-        #btn = tk.Button(self, text='askopenfilename',command=self.askopenfilename)
-        #btn.pack(pady=5)
+    # Funcion mouse - movimiento
     def mouse_move(self,event):
-        x = event.x#-10
-        y = event.y#-self.btn_posy
-        if self.flag_rect == True:
-            img_temp_m = self.image_in.copy()
-            self.fin_points = [x , y]
-            self.img_copy = cv2.rectangle(img_temp_m, tuple(self.ini_points), tuple(self.fin_points), (0, 0, 255), 5)    
-            print("inipoitns",self.ini_points)
-        if self.flag_circle_fg == True and self.start == True: 
-            print("Circulo fg")
-            cv2.circle(self.img_copy, (x, y), 3, (255,255,255), -1)
-            cv2.circle(self.mask, (x, y), 5, 1, -1)    
-        elif self.flag_circle_bg == True and self.start == True: 
-            print("Circulo bg")
-            cv2.circle(self.img_copy, (x, y), 3, (0,0,0), -1)
-            cv2.circle(self.mask, (x, y), 5, 0, -1)
-        self.trans_show_images(self.img_copy,self.image_out)   
+        x = event.x # Posicion mouse en x
+        y = event.y # Posicion mouse en y 
+        if self.flag_rect == True: # Opcion rectangulo seleccionada
+            img_temp_m = self.image_in.copy() # Copia de la imagen original
+            self.fin_points = [x , y] # Posicion actual del mouse
+            self.img_copy = cv2.rectangle(img_temp_m, tuple(self.ini_points), tuple(self.fin_points), (0, 0, 255), 5) # Rectangulo de color rojo sobre la imagen
+        if self.flag_circle_fg == True and self.start == True: # Opcion primer plano seleccionada
+            cv2.circle(self.img_copy, (x, y), 3, (255,255,255), -1) # Circulo de color blanco sobre la imagen
+            cv2.circle(self.mask, (x, y), 5, 1, -1) # Circulo en mascara de valor 1 (primer plano seguro)
+        elif self.flag_circle_bg == True and self.start == True: # Opcion fondo seleccionada
+            cv2.circle(self.img_copy, (x, y), 3, (0,0,0), -1) # Circulo de color negro sobre la imagen
+            cv2.circle(self.mask, (x, y), 5, 0, -1) # Circulo en mascara de valor 0 (fondo seguro)
+        self.trans_show_images(self.img_copy,self.image_out) # Actualizacion de imagen en los paneles de GUI
         
-        #print("Mouse position: (%s %s)" % (event.x, event.y))
-        
+    # Funcion mouse - presionar     
     def mouse_down(self,event):
-        x = event.x#-10
-        y = event.y#-self.btn_posy
-        #if x>0 and y>0:
-        print("Click en: (%s %s)" % (event.x, event.y))
-        if self.flag_rect == True:
-            self.ini_points = [x , y]
-        #else:
-         #   print("Fuera de imagen")
-        if ((self.flag_rect == False) and ((self.flag_circle_fg == True) or (self.flag_circle_bg == True))):
-            self.start = True
-            print("Circulo start")
-        
+        x = event.x # Posicion mouse en x
+        y = event.y # Posicion mouse en y 
+        # print("Click en: (%s %s)" % (event.x, event.y))
+        if self.flag_rect == True: # Opcion rectangulo seleccionada
+            self.ini_points = [x , y] # Posicion actual del mouse
+        if ((self.flag_rect == False) and ((self.flag_circle_fg == True) or (self.flag_circle_bg == True))): # Opcion primer plano y fondo seleccionadas
+            self.start = True # Bandera inicio habilitada
+            # print("Circulo start")
+      
+    # Funcion mouse - presionar   
     def mouse_up(self,event):
-        print("Suelto en: (%s %s)" % (event.x, event.y))
-        x = event.x#-10
-        y = event.y#-self.btn_posy
-        if self.flag_rect == True:
-            img_temp = self.image_in.copy()
-            self.fin_points = [x , y]
-            self.img_copy = cv2.rectangle(img_temp, tuple(self.ini_points), tuple(self.fin_points), (0, 0, 255), 5)
-            self.mask = cv2.rectangle(self.mask, tuple(self.ini_points), tuple(self.fin_points), 3, -1)
-            self.corners = self.ini_points[0],self.ini_points[1],self.fin_points[0],self.fin_points[1]
-            #self.flag_rect = False
-            print('Rectangulo terminado')
-            #cv2.destroyWindow('image_mod')
-            self.flag_rect = False
-        self.start = False
-        self.trans_show_images(self.img_copy,self.image_out)     
-        
+        x = event.x # Posicion mouse en x
+        y = event.y # Posicion mouse en y 
+        # print("Suelto en: (%s %s)" % (event.x, event.y))
+        if self.flag_rect == True: # Opcion rectangulo seleccionada
+            img_temp = self.image_in.copy() # Copia de la imagen original
+            self.fin_points = [x , y] # Puntos finales del rectangulo
+            self.img_copy = cv2.rectangle(img_temp, tuple(self.ini_points), tuple(self.fin_points), (0, 0, 255), 5) # Rectangulo de color rojo sobre la imagen
+            self.mask = cv2.rectangle(self.mask, tuple(self.ini_points), tuple(self.fin_points), 3, -1) # Rectangulo con valor 3 (primer plano posible) en la mascara
+            self.corners = self.ini_points[0],self.ini_points[1],self.fin_points[0],self.fin_points[1] # Esquinas del rectangulo realizado
+            # print('Rectangulo terminado')
+            self.flag_rect = False # Deshabilitar función del rectangulo
+        self.start = False # Bandera inicio deshabilitada
+        self.trans_show_images(self.img_copy,self.image_out) # Actualizacion de imagen en los paneles de GUI     
+    
+    # Funcion direccion de archivo
     def askopenfilename(self):
-        ###ask filepath
-        filepath = askopenfilename(initialdir = "/",title = "Select file",filetypes = (("jpeg files","*.jpg"),("png files","*.png"),("all files","*.*"))) # Abre el buscador de archivos
-
-        ###if you selected a file path
+        filepath = askopenfilename() # Adquiere la direccion del archivo
         if filepath: # Verifica que se escoge un archivo y/o no se ha dado click en cancelar
-            self.filepath = filepath    
-        #image = cv2.imread(path) # load the image from disk
-        #return image
+            self.filepath = filepath # Direccion del archivo
 
     # Funcion de seleccionar imagen
     def select_image(self):
-        print("ENTRO A SELECCIONAR IMAGEN")
-        self.askopenfilename()
-        self.image_in = cv2.imread(self.filepath) # load the image from disk
-        self.image_in = cv2.resize(self.image_in,(self.tam,self.tam))
-        self.img_copy = self.image_in.copy()
-        self.img_bg = np.zeros((self.tam,self.tam,3),np.uint8)
-        self.image_out = cv2.imread(self.filepath) # load the image from disk
-        self.image_out = cv2.resize(self.image_out,(self.tam,self.tam))
-        self.trans_show_images(self.image_in,self.image_out)
-        
-        self.gui()
-        # self.image_in = self.askopenfilename
-        # self.image_out = self.askopenfilename
+        # print("ENTRO A SELECCIONAR IMAGEN")
+        self.askopenfilename() # Direccion del archivo
+        self.image_in = cv2.imread(self.filepath) # Abrir imagen de disco
+        self.image_in = cv2.resize(self.image_in,(self.tam,self.tam)) # Cambiar tamaño de imagen a tamxtam
+        self.img_copy = self.image_in.copy() # Copia de la imagen original
+        self.img_bg = np.zeros((self.tam,self.tam,3),np.uint8) # Creacion de imagen de fondo con dimensiones tamxtam y color negro
+        self.image_out = self.image_in.copy() # Copia de la imagen original
+        self.trans_show_images(self.image_in,self.image_out) # Actualizacion de imagen en los paneles de GUI
+
     # Funcion para transformar y mostrar imagenes en GUI      
     def trans_show_images(self,image_in,image_out):
-        # OpenCV represents images in BGR order; however PIL represents
-  		# images in RGB order, so we need to swap the channels
-        image_in = cv2.cvtColor(image_in, cv2.COLOR_BGR2RGB)
-        image_out = cv2.cvtColor(image_out, cv2.COLOR_BGR2RGB)
-  		# convert the images to PIL format...
-        image_in = Image.fromarray(image_in)
-        image_out = Image.fromarray(image_out)
-  		# ...and then to ImageTk format
-        image_in = ImageTk.PhotoImage(image_in)
-        image_out = ImageTk.PhotoImage(image_out)
+        image_in = cv2.cvtColor(image_in, cv2.COLOR_BGR2RGB) # Cambiar imagen de BGR (opencv) a RGB (PIL)
+        image_out = cv2.cvtColor(image_out, cv2.COLOR_BGR2RGB) # Cambiar imagen de BGR (opencv) a RGB (PIL)
+        image_in = Image.fromarray(image_in) # Conversion a formato PIL
+        image_out = Image.fromarray(image_out) # Conversion a formato PIL
+        image_in = ImageTk.PhotoImage(image_in) # Conversion a formato ImageTk
+        image_out = ImageTk.PhotoImage(image_out) # Conversion a formato ImageTk
           
-          # if the panels are None, initialize them
-        if self.panelA is None or self.panelB is None:
-            # the first panel will store our original imag
+        if self.panelA is None or self.panelB is None: # Si los paneles están vacios, los inicializa
+            # Configuracion del primer panel
             self.panelA = tk.Label(image=image_in)
             self.panelA.image = image_in
-            self.panelA.place(x=10, y=self.btn_posy, width=self.tam, height=self.tam)
-            # while the second panel will store the edge map
+            self.panelA.place(x=10, y=self.btn_posy, width=self.tam, height=self.tam) # Posicion primer panel
+            # Configuracion del segundo panel
             self.panelB = tk.Label(image=image_out)
             self.panelB.image = image_out       
-            self.panelB.place(x=620, y=self.btn_posy, width=self.tam, height=self.tam)
-            # otherwise, update the image panels
-        else:
-            # update the pannels
+            self.panelB.place(x=620, y=self.btn_posy, width=self.tam, height=self.tam) # Posicion segundo panel
+        else: # Si los paneles estan creados los actualiza
+            # Primer panel
             self.panelA.configure(image=image_in)
-            self.panelB.configure(image=image_out)
             self.panelA.image = image_in
+            # Segundo panel
+            self.panelB.configure(image=image_out)
             self.panelB.image = image_out
-        
-        self.panelA.bind('<Motion>',self.mouse_move)        
-        self.panelA.bind('<Button-1>', self.mouse_down)
-        self.panelA.bind('<ButtonRelease-1>', self.mouse_up)
+        # Eventos del mouse: Si ____ sobre el primer panel
+        self.panelA.bind('<Motion>',self.mouse_move) # Mouse se mueve
+        self.panelA.bind('<Button-1>', self.mouse_down) # Se presiona el mouse
+        self.panelA.bind('<ButtonRelease-1>', self.mouse_up) # Se deja de presionar el mouse
     
-                
     # Funcion de hacer el rectangulo
     def select_rectangle(self):
-        print("HOLA")  
-        self.flag_rect = True
-        self.flag_circle_fg = False
-        self.flag_circle_bg = False
+        # print("HOLA REC")  
+        self.flag_rect = True # Bandera rectangulo habilitada
+        self.flag_circle_fg = False # Bandera primer plano deshabilitada
+        self.flag_circle_bg = False # Bandera fondo deshabilitada
+        self.ini_points = [] # Inicializacion de puntos iniciales
     
     # Funcion para seleccionar fondo
     def select_background(self):
-        self.flag_rect = False
-        self.flag_circle_fg = False
-        self.flag_circle_bg = True
-        print("HOLA BG")  
-    
+        # print("HOLA BG")  
+        self.flag_rect = False # Bandera rectangulo deshabilitada
+        self.flag_circle_fg = False # Bandera primer plano deshabilitada
+        self.flag_circle_bg = True # Bandera fondo habilitada
+        
     # Funcion para seleccionar primer plano
     def select_foreground(self):
-        self.flag_rect = False
-        self.flag_circle_fg = True
-        self.flag_circle_bg = False
-        print("HOLA FG")
-    
+        # print("HOLA FG")
+        self.flag_rect = False # Bandera rectangulo deshabilitada
+        self.flag_circle_fg = True # Bandera primer plano habilitada
+        self.flag_circle_bg = False # Bandera fondo deshabilitada
+        
     # Funcion para realizar iteracion
     def select_iteration(self):
-        print("HOLA IT")
-        self.flag_rect = False
-        self.flag_circle_fg = False
-        self.flag_circle_bg = False
-        self.iteration()
+        # print("HOLA IT")
+        self.flag_rect = False # Bandera rectangulo deshabilitada
+        self.flag_circle_fg = False # Bandera primer plano deshabilitada
+        self.flag_circle_bg = False # Bandera fondo deshabilitada
+        self.iteration() # funcion iteracion
     
     # Funcion para seleccionar imagenes del fondo
     def select_bg(self):
-        print("HOLA FG sel")
-        self.askopenfilename()
-        self.img_bg = cv2.imread(self.filepath) # load the image from disk
-        #self.image_out = cv2.imread(self.filepath) # load the image from disk
-        self.img_bg = cv2.resize(self.img_bg,(self.tam,self.tam))
-        #self.image_out = cv2.resize(self.image_out,(self.tam,self.tam))
-        #self.trans_show_images(self.image_in,self.image_out)
-        
-    # Funcion para seleccionar o quitar pantalla completa
-    def select_fs(self):
-        #global state # variables globales usadas
-        if self.state: # Si esta en pantalla completa...
-            self.state = False # ... salga de pantalla completa
-        else: # Si no esta en pantalla completa...
-            self.state = True # ... ponga pantalla completa
-        self.attributes("-fullscreen", self.state) # Ajustar el estado de la pantalla
+        # print("HOLA FG sel")
+        self.askopenfilename() # Direccion del archivo
+        self.img_bg = cv2.imread(self.filepath) # Carga imagen del fondo
+        self.img_bg = cv2.resize(self.img_bg,(self.tam,self.tam)) # Cambia el tamaño de la imagen
     
+    # Funcion para guardar imagen de salida
     def select_save(self):
-        bar = np.zeros((self.image_in.shape[0], 5, 3), np.uint8)
-        res = np.hstack((self.image_in, bar, self.img_copy, bar, self.output, bar, self.image_out,bar, self.img_bg))
-        cv2.imwrite('output.png', res)
-        
+        bar = np.zeros((self.image_in.shape[0], 5, 3), np.uint8) # Barra para separar imagenes
+        res = np.hstack((self.image_in, bar, self.img_copy, bar, self.output, bar, self.image_out,bar, self.img_bg)) # Junta imagen original, barra, imagen original con rectangulo y mascara negra y blanca, barra, imagen segmentada, barra, imagen segmentada con fondo, barra y fondo 
+        cv2.imwrite('output.png', res) # Guarda imagen de salida
+    
+    # Funcion de iteracion
     def iteration(self):
-        cv2.grabCut(self.image_in, self.mask, None, self.BGD_model, self.FGD_model, 1, cv2.GC_INIT_WITH_MASK)
-        self.mask_out = np.where((self.mask==1)|(self.mask==3), 1, 0).astype('uint8')
-        self.output = cv2.bitwise_and(self.image_in, self.image_in, mask=self.mask_out)
-        # #cv2.imshow('image_mod',output)
-        self.mask_bg = np.where((self.mask==1)|(self.mask==3), 0, 1).astype('uint8')
-        # self.img_bg = cv2.imread('lena.jpg', 1)  
-        # self.img_bg = cv2.resize(self.img_bg,(self.tam,self.tam))
-        output_bg = cv2.bitwise_or(self.img_bg,self.img_bg, mask=self.mask_bg)
-        self.image_out = cv2.bitwise_or(output_bg,self.output)
-        # cv2.imshow('image_mod',output_bg)
-        self.trans_show_images(self.img_copy,self.image_out)
+        cv2.grabCut(self.image_in, self.mask, None, self.BGD_model, self.FGD_model, 1, cv2.GC_INIT_WITH_MASK) # Funcion grabcut 1 iteracion con mascara
+        self.mask_out = np.where((self.mask==1)|(self.mask==3), 1, 0).astype('uint8') # Si valor es 1 o 3 (primer plano), se cambia a 1 (primer plano seguro), valores de 0 y 2 (fondo) cambian a 0 (fondo seguro)
+        self.output = cv2.bitwise_and(self.image_in, self.image_in, mask=self.mask_out) #  Mascara imagen de salida - imagen segmentada
+        self.mask_bg = np.where((self.mask==1)|(self.mask==3), 0, 1).astype('uint8') # Si valor es 1 o 3 (primer plano), se cambia a 0, valores de 0 y 2 (fondo) cambian a 1
+        output_bg = cv2.bitwise_or(self.img_bg,self.img_bg, mask=self.mask_bg) # Imagen fondo con negro en zona segmentada de la imagen segmentada
+        self.image_out = cv2.bitwise_or(output_bg,self.output) # Imagen segmentada con fondo
+        self.trans_show_images(self.img_copy,self.image_out) # Actualizacion de imagen en los paneles de GUI
          
     # Funcion para cerrar la ventana
     def select_reset(self):
-        self.BGD_model = np.zeros((1,65),np.float64)
-        self.FGD_model = np.zeros((1,65),np.float64)
-        self.ini_points , self.fin_points , self.temp_points  , self.corners = [],[],[],[]
-        self.flag_rect = False #Rect = True
-        self.flag_circle_fg = False
-        self.flag_circle_bg = False
-        self.start = False
-        self.flag_rect_or_mask = True #Rect_iteration = True / mask_iteration = False
-        self.initial_mask = np.zeros((self.tam,self.tam),np.uint8)
-        self.mask = np.zeros((self.tam,self.tam),np.uint8)
-        self.img_bg = np.zeros((self.tam,self.tam,3),np.uint8)
-        self.trans_show_images(self.img_bg,self.img_bg)
+        # Declaración de variables
+        self.BGD_model = np.zeros((1,65),np.float64) # Vector modelo fondo
+        self.FGD_model = np.zeros((1,65),np.float64) # Vector modelo primer plano
+        self.ini_points , self.fin_points , self.temp_points  , self.corners = [],[],[],[] # Puntos y esquinas
+        self.flag_rect = False # Bandera rectangulo
+        self.flag_circle_fg = False # Bandera primer plano
+        self.flag_circle_bg = False # Bandera fondo
+        self.start = False # Bandera inicio
+        self.initial_mask = np.zeros((self.tam,self.tam),np.uint8) # Mascara inicial
+        self.mask = np.zeros((self.tam,self.tam),np.uint8) # Mascara
+        self.img_bg = np.zeros((self.tam,self.tam,3),np.uint8) # Imagen fondo
+        self.trans_show_images(self.img_bg,self.img_bg) # Actualizacion de imagen en los paneles de GUI
 
-###Step 2: Creating The App
+# App
 class App(tk.Tk):
     def __init__(self, *args, **kwargs):
-        ###call the parent constructor
         tk.Tk.__init__(self, *args, **kwargs)
             
         self.attributes("-fullscreen", True) # Pantalla completa
+        self.filepaths = [] # Vector direccion de archivo
 
-        ###create filepath list
-        self.filepaths = []
-
-        ###show app frame
         self.appFrame = AppFrame(self)
         self.appFrame.pack(side="top",fill="both",expand=True)
         
-###Step 3: Bootstrap the app
+# main
 def main():
-    app = App()
-    window = tk.Tk()
-    """
-    Configuracion de la ventana
-    """
-    #tk.title("Proyecto Procesamiento de Imagenes") # Titulo ventana
-    #tk.geometry('1360x720') # self.tamaño ventana
-
-    app.mainloop()
+    app = App() # Aplicacion
+    window = tk.Tk() #  Tkinter
+    app.mainloop() # GUI
 
 if __name__ == '__main__':
-    main()
+    main() # Ejecutar main
