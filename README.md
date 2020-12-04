@@ -10,7 +10,6 @@ La segmentación de objetos sobre una imagen es una de las aplicaciones más uti
 
 ### Video explicativo
 
-Presionar la imagen los redigirá al video
 [<p align="center"><img src="https://github.com/andrearuizg/Proyecto_Final_Grabcut/blob/main/Imagenes/GUI/video.png" width="500"></p>](https://youtu.be/yoFRtnh3hco)
 
 ### Instalación
